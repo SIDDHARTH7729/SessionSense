@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+> ⚠️ This project is currently a work in progress. Major features and improvements are still being implemented. Stay tuned!
 
-## Getting Started
 
-First, run the development server:
+# 🎥 SessionSense - Smart Video Focus Tracker
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+SessionSense is an intelligent video tracking platform designed to help users monitor their engagement while watching educational content. It detects actions like play, pause, seek, rewind, and forward to compute how focused a user remained during a session. At the end of each session, users receive a detailed summary email of their interactions and focus intervals which can be use by the user to track it's progress, as well as the companies like coursera , udemy or private instituions for tracking their user's progress as well as the content they provide. Perfect tracking can help them realise if any portions of their content need more improvement or better explanations as well as stricter norms are required for  their sites.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Upcoming Features / In Progress
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+    🚫 Single Tab Enforcement: Users will be restricted to only one active video session per account to prevent simultaneous sessions in multiple tabs.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    🔒 Auth Integration (Planned): Support for user authentication to associate sessions with accounts.
 
-## Learn More
+    🎯 Focus Drop Alerts: Planned alerts when users appear distracted (e.g., tab switch detection, inactivity).
 
-To learn more about Next.js, take a look at the following resources:
+    📉 Content Weakness Insights (Admin View): Insights for creators to identify where users most frequently rewind or drop off, helping improve content.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📌 Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 📊 Tracks user interactions with videos (play, pause, seek, forward, rewind)
+- ⏱️ Calculates total watch time and continuous focused intervals
+- 🔁 Identifies engagement patterns and rewatches
+- 📧 Sends session summary emails to users post-session using [Resend](https://resend.com)
+- ⚡ Real-time data tracking using Redis
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🚀 Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Frontend:** Next.js 14 (App Router), TypeScript, Tailwind CSS
+- **Backend:** Next.js API Routes
+- **Database/Cache:** Redis using upstash (for high-speed tracking and session storage)
+- **Email Service:** Resend
+- **Authentication:** (If applicable, e.g., Clerk/Auth.js)
+- **Deployment:** Vercel(will happen)
+
+---
+
+
