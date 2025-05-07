@@ -1,5 +1,8 @@
 > ⚠️ This project is currently a work in progress. Major features and improvements are still being implemented. Stay tuned!
 
+Project Workflow:
+
+ - Can be seen in SessionSense_WorkFlow.pdf in directory (download if not visbile)
 
 # 🎥 SessionSense - Smart Video Focus Tracker
 
