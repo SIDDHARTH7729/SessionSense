@@ -1,20 +1,24 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Upload, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useRouter } from 'next/navigation'; // Corrected import
+import { useRouter } from 'next/navigation';
+import { useUser } from "@clerk/clerk-react";
 
 const VideoUploadSection = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [videoId, setVideoId] = useState<string | null>(null); // To store the videoId
+  const [videoId, setVideoId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-    const router = useRouter(); // Use useRouter for client-side navigation
-
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const router = useRouter();
+  const [videoTitle, setVideoTitle] = useState('');
+  
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -32,23 +36,23 @@ const VideoUploadSection = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-      handleFile(file);
+    handleFile(file);
   };
 
-    const handleFile = (file: File | undefined) => {
-        if (file && file.type.startsWith("video/")) {
-            if (file.size > 100 * 1024 * 1024) { // 100MB limit
-                setError("File size too large. Please upload a video under 100MB.");
-                setVideoFile(null);
-            } else {
-                setError(null);
-                setVideoFile(file);
-            }
-        } else if (file) {
-            setError("Invalid file type. Please upload a video file.");
-            setVideoFile(null);
-        }
+  const handleFile = (file: File | undefined) => {
+    if (file && file.type.startsWith("video/")) {
+      if (file.size > 100 * 1024 * 1024) {
+        setError("File size too large. Please upload a video under 100MB.");
+        setVideoFile(null);
+      } else {
+        setError(null);
+        setVideoFile(file);
+      }
+    } else if (file) {
+      setError("Invalid file type. Please upload a video file.");
+      setVideoFile(null);
     }
+  };
 
   const handleClick = () => fileInputRef.current?.click();
 
@@ -57,15 +61,20 @@ const VideoUploadSection = () => {
       setError("Please upload a video before analyzing.");
       return;
     }
+    if (!videoTitle.trim()) {
+      setError("Please enter a title for the video.");
+      return;
+    }
     setLoading(true);
     setError(null);
-    setVideoId(null); // Clear previous videoId
+    setVideoId(null);
 
     const formData = new FormData();
     formData.append("video", videoFile);
+    formData.append("title", videoTitle);
 
     try {
-      const res = await fetch("/api/process-video", { //  Keep the /api/process-video
+      const res = await fetch("/api/uploadVideo", {
         method: "POST",
         body: formData,
       });
@@ -78,23 +87,18 @@ const VideoUploadSection = () => {
             errorMessage = errorData.error;
           }
         } catch (parseError) {
-          // Keep default message
+          console.error("Failed to parse error response:", parseError);
+          errorMessage = "Video processing failed. Please try again.";
         }
         throw new Error(errorMessage);
       }
 
-      // Simulate getting videoId from the backend (replace with actual response)
-      const data = await res.json(); // Expecting a JSON response
-      if (data && data.videoId) {
-          setVideoId(data.videoId); // Store the videoId
-          // Redirect to the video player page
-          router.push(`/video/${data.videoId}`); // Use router.push
-      }
-      else{
+      const data = await res.json();
+      if (data) {
+        setVideoId(data);
+      } else {
         throw new Error("Invalid response from server: videoId is missing");
       }
-
-
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred during video processing.");
       console.error(err);
@@ -102,6 +106,16 @@ const VideoUploadSection = () => {
       setLoading(false);
     }
   };
+
+ 
+
+  useEffect(() => {
+    return () => {
+      if (videoFile) {
+        URL.revokeObjectURL(URL.createObjectURL(videoFile));
+      }
+    };
+  }, [videoFile]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background px-4">
@@ -113,6 +127,15 @@ const VideoUploadSection = () => {
           <p className="text-muted-foreground mt-3 text-lg">
             Upload your video to begin tracking your progress and engagement.
           </p>
+        </div>
+        <div className="mb-4">
+          <Input
+            type="text"
+            placeholder="Enter video title"
+            value={videoTitle}
+            onChange={(e) => setVideoTitle(e.target.value)}
+            className="w-full"
+          />
         </div>
 
         <div
@@ -174,12 +197,30 @@ const VideoUploadSection = () => {
               "Upload and Process"
             )}
           </Button>
-            {videoId && (
-                <div className="mt-4 text-green-500 flex items-center justify-center gap-2">
-                    <CheckCircle size={20} />
-                    <span className="font-medium">Video uploaded successfully!  Redirecting...</span>
-                </div>
-            )}
+          {videoId && (
+            <div className="mt-4">
+              <p className="text-green-500 flex items-center justify-center gap-2">
+                <CheckCircle size={20} />
+                <span className="font-medium">Video uploaded successfully!</span>
+              </p>
+              <video
+                ref={videoRef}
+                controls
+                className="mt-4 rounded-lg w-full max-w-md mx-auto"
+                src={videoFile ? URL.createObjectURL(videoFile) : ''}
+              />
+              <p className="mt-2 text-sm text-gray-400">
+                You can view your uploaded video.
+              </p>
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => router.push(`/lecture/${videoId}`)}
+              >
+                Go to Lecture
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -187,3 +228,4 @@ const VideoUploadSection = () => {
 };
 
 export default VideoUploadSection;
+

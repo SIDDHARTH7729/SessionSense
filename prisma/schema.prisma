@@ -12,6 +12,7 @@ datasource db {
 model User {
   id           String    @id @default(cuid())
   clerkId      String    @unique
+  videos       Video[]
   progress     Progress[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -22,6 +23,8 @@ model Video {
   title         String
   cloudinaryUrl String
   duration      Int
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
   progress      Progress[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
