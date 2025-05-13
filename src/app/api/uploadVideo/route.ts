@@ -35,6 +35,8 @@ export async function POST(req: NextRequest) {
       cloudinaryResponse.duration,
       userId
     );
+
+    console.log("Video uploaded successfully:", videoData.id);
     return NextResponse.json({ success: true, video: videoData.id }, { status: 201 });
   } catch (error: any) {
     console.error("Upload error:", error);

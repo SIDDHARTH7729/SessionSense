@@ -1,9 +1,12 @@
 import prisma from "../prisma";
 
-export async function getVideoDuration(videoId: string){
-    const durationVideo = await prisma.video.findUnique({
+export async function getVideoDurationAndURL(videoId: string){
+    const durationVideoAndURL = await prisma.video.findUnique({
         where: {id: videoId},
-        select : {duration:true},
+        select : {duration:true,cloudinaryUrl:true},
     });
-    return durationVideo?.duration || 0;
+    return {
+        duration: durationVideoAndURL?.duration || 0,
+        cloudinaryUrl: durationVideoAndURL?.cloudinaryUrl || "",
+    }
 }
