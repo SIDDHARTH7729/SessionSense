@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,17 +11,17 @@ export default function VideoPlayerWithProgress() {
   const [progress, setProgress] = useState(0);
   const params = useParams(); 
   const videoId = params?.videoId as string;
+  const {user,isLoaded} = useUser();
 
   // Action counts
   const [pauses, setPauses] = useState(0);
   const [forwards, setForwards] = useState(0);
   const [rewinds, setRewinds] = useState(0);
-
   const [lastTime, setLastTime] = useState(0);
-  const user = {
-    id: "USER_ID", // Get from auth
-    email: "user@example.com", // Get from auth
-    username: "Siddharth", // Get from auth
+  const userdata = {
+    id: user?.id,
+    email: user?.emailAddresses[0], 
+    username: user?.username, 
   };
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export default function VideoPlayerWithProgress() {
     await fetch("/api/log-event", {
       method: "POST",
       body: JSON.stringify({
-        userId: user.id,
+        userId: userdata.id,
         videoId,
         action,
         timestamp,
@@ -92,9 +93,9 @@ export default function VideoPlayerWithProgress() {
         await fetch("/api/send-session-summary", {
           method: "POST",
           body: JSON.stringify({
-            email: user.email,
-            username: user.username,
-            userId: user.id,
+            email: userdata.email,
+            username: userdata.username,
+            userId: userdata.id,
             videoId,
             pauses,
             forwards,

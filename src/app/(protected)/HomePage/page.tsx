@@ -9,7 +9,7 @@ type Props = {}
 
 const HomePage = (props: Props) => {
 
-   const { isLoaded, user } = useUser(); // Get user data from Clerk
+   const { isLoaded, user } = useUser(); 
     const userID = user?.id;
     useEffect(() => {
       const chekcUserStatus = async () => {

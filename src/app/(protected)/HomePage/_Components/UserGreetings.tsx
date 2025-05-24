@@ -14,7 +14,7 @@ const messages = [
   "Your watch journey continues...",
 ];
 
-export function UserGreeting() { // Removed UserGreetingProps and user prop
+export function UserGreeting() { 
   const { user, isSignedIn} = useUser(); 
   const [greeting, setGreeting] = useState("");
   const [message, setMessage] = useState("");

@@ -15,7 +15,7 @@ export async function getWatchedIntervals(userId: string, videoId: string): Prom
 
   if (!progress || !Array.isArray(progress.watched)) return [];
 
-  // Filter and assert types
+  
   const intervals = progress.watched.filter(
     (interval: any): interval is WatchedInterval =>
       Array.isArray(interval) &&

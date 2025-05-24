@@ -14,6 +14,7 @@ model User {
   clerkId      String    @unique
   videos       Video[]
   progress     Progress[]
+  watchedIntervals WatchedInterval[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
@@ -26,6 +27,7 @@ model Video {
   userId        String
   user          User        @relation(fields: [userId], references: [id])
   progress      Progress[]
+  watchedIntervals WatchedInterval[] 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -42,4 +44,17 @@ model Progress {
   updatedAt    DateTime  @updatedAt
 
   @@unique([userId, videoId])
+}
+
+model WatchedInterval {
+  id        String   @id @default(cuid())
+  start     Int      // The start time of the interval 
+  end       Int      // The end time of the interval 
+  userId    String
+  videoId   String
+  user      User     @relation(fields: [userId], references: [id])
+  video     Video    @relation(fields: [videoId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
 }
